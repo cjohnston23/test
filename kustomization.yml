@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kube-system
+
+resources:
+- https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/v3.1.2/manifests/vanilla/vsphere-csi-driver.yaml
+
+patches:
+- target:
+    kind: Deployment
+    name: vsphere-csi-controller
+  patch: |-
+    - op: remove
+      path: /spec/template/spec/volumes/0/secret
+    - op: add
+      path: /spec/template/spec/volumes/0/hostPath
+      value:
+        path: /etc/cloud-provider/
